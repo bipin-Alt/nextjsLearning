@@ -1,3 +1,5 @@
+
+
 import Link from "next/link";
 
 export default function commonDashboardLayout ({children}){
@@ -21,7 +23,6 @@ return (
            {children}
         </div>
      </div>
-    
     </div>
 )
 }
