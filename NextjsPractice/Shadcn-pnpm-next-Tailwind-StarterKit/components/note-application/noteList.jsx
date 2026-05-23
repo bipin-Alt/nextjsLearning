@@ -1,8 +1,42 @@
+'use client'
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 export default function NoteList({ notes }) {
-  
+  const router = useRouter();
+
   console.log(notes);
+  async function deleteNote(id) {
+    const request = await fetch("/api/notes", {
+      method: "DELETE",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({ id })
+    });
+    if (!request.ok) {
+      console.log("Failed to delete note", await request.text());
+      return;
+    }
+
+    router.refresh();
+  }
+  
+  async function updateNote(id) {
+    const request = await fetch("/api/notes",{
+      method:"PATCH",
+      headers:{
+        "content-type":"application/json"
+      },
+      body: JSON.stringify({ id })
+    }) ;
+    if(!request.ok){
+      console.log("Failed to delete note", await request.text());
+      return;
+    }
+    router.refresh();
+  }
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -23,6 +57,8 @@ export default function NoteList({ notes }) {
             </div>
             <h3 className="mb-3 text-xl font-semibold text-foreground">{note.title}</h3>
             <p className="text-sm leading-6 text-muted-foreground">{note.content}</p>
+            <Button onClick={()=>{deleteNote(note.id)}}>Delete Note</Button>
+            <Button onClick={()=>{updateNote(note.id)}}>Edit Note</Button>
           </article>
         ))
       ) : (
