@@ -1,23 +1,36 @@
 'use client'
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
 function AddNote() {
-
-  const[currentNote, setCurrentNote] = useState({
-    title : "",
-    description:""
+  const router = useRouter();
+  const [currentNote, setCurrentNote] = useState({
+    title: "",
+    description: ""
   });
 
-async function handleOnAdd (){
-  const request = await fetch("http://localhost:3000/api/notes", {
-    method : "POST",
-    body :JSON.stringify({currentNote})
-  });
-  console.log(request)
-}
+  async function handleOnAdd() {
+    const request = await fetch("/api/notes", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify(currentNote)
+    });
+
+    if (!request.ok) {
+      console.error("Failed to add note", await request.text());
+      return;
+    }
+
+    await request.json();
+    setCurrentNote({ title: "", description: "" });
+    router.refresh();
+  }
+
   return (
     <div className="rounded-3xl border border-border bg-slate-50/80 p-6 shadow-sm shadow-slate-200/50 backdrop-blur dark:border-white/10 dark:bg-slate-900/80 dark:shadow-black/20">
       <div className="mb-6 flex flex-col gap-2">
@@ -28,13 +41,24 @@ async function handleOnAdd (){
           Add a new note
         </h1>
         <p className="max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-          Create a note with a title and a short description. Your notes will appear below in a clean, responsive grid.
+          Create a note with a title and a  description. Your notes will appear below in a clean, responsive grid.
         </p>
       </div>
 
       <form className="grid gap-4">
-        <Input type="text" placeholder="Title" className="bg-white dark:bg-slate-950" onChange={(event)=>setCurrentNote({...currentNote, title:event.target.value})} />
-        <Textarea placeholder="Write your note here..." className="bg-white dark:bg-slate-950" onChange={(event)=>setCurrentNote({...currentNote, description:event.target.value})} />
+        <Input
+          type="text"
+          value={currentNote.title}
+          placeholder="Title"
+          className="bg-white dark:bg-slate-950"
+          onChange={(event) => setCurrentNote({ ...currentNote, title: event.target.value })}
+        />
+        <Textarea
+          value={currentNote.description}
+          placeholder="Write your note here..."
+          className="bg-white dark:bg-slate-950"
+          onChange={(event) => setCurrentNote({ ...currentNote, description: event.target.value })}
+        />
         <div className="flex justify-end">
           <Button onClick={handleOnAdd} className="rounded-xl px-6 py-2" type="button">
             Add Note
