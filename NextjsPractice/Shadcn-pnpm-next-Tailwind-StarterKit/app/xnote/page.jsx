@@ -1,17 +1,19 @@
-import AddNote from "@/components/note-application/addNote";
-import NoteList from "@/components/note-application/noteList";
+import NotesClient from "@/components/note-application/NotesClient";
+import fs from "fs/promises";
+import path from "path";
 
 async function Notes() {
-   const response = await fetch("http://localhost:3000/api/notes",{cache:'no-store'});
+  const filePath = path.join(process.cwd(), "data", "notes.json");
+  let notes = [];
+  try {
+    const data = await fs.readFile(filePath, "utf-8");
+    notes = JSON.parse(data);
+    if (!Array.isArray(notes)) notes = [];
+  } catch (e) {
+    notes = [];
+  }
 
-    const data = await response.json();
-    console.log(data);
-    return (
-        <>
-          <AddNote/>
-          <NoteList notes={data}/>
-        </>
-      );
+  return <NotesClient initialNotes={notes} />;
 }
 
 export default Notes;

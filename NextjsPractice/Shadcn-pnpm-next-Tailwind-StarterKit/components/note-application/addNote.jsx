@@ -1,40 +1,38 @@
 'use client'
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
-function AddNote() {
-  const router = useRouter();
+function AddNote({ editingNote, onSave, onCancel }) {
   const [currentNote, setCurrentNote] = useState({
     title: "",
-    description: ""
+    description: "",
   });
 
-  async function handleOnAdd() {
-    const request = await fetch("/api/notes", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json"
-      },
-      body: JSON.stringify(currentNote)
-    });
-
-    if (!request.ok) {
-      console.error("Failed to add note", await request.text());
-      return;
+  useEffect(() => {
+    if (editingNote) {
+      setCurrentNote({
+        title: editingNote.title ?? "",
+        description: editingNote.description ?? "",
+      });
+    } else {
+      setCurrentNote({ title: "", description: "" });
     }
+  }, [editingNote]);
 
-    await request.json();
-    setCurrentNote({ title: "", description: "" });
-    router.refresh();
+  async function handleOnSave() {
+    await onSave({
+      id: editingNote?.id,
+      title: currentNote.title,
+      description: currentNote.description,
+    });
   }
 
   return (
     <div className="rounded-3xl border border-border bg-slate-50/80 p-6 shadow-sm shadow-slate-200/50 backdrop-blur dark:border-white/10 dark:bg-slate-900/80 dark:shadow-black/20">
       <div className="mb-6 flex flex-col gap-2">
-        <p className="text-sm font-medium uppercase tracking-[0.24em] text-primary-foreground text-primary dark:text-primary-foreground/90">
+        <p className="text-sm font-medium uppercase tracking-[0.24em] text-primary-foreground dark:text-primary-foreground/90">
           Notes app
         </p>
         <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
@@ -59,9 +57,14 @@ function AddNote() {
           className="bg-white dark:bg-slate-950"
           onChange={(event) => setCurrentNote({ ...currentNote, description: event.target.value })}
         />
-        <div className="flex justify-end">
-          <Button onClick={handleOnAdd} className="rounded-xl px-6 py-2" type="button">
-            Add Note
+        <div className="flex items-center justify-between gap-4">
+          {editingNote ? (
+            <Button onClick={onCancel} variant="secondary" type="button">
+              Cancel
+            </Button>
+          ) : null}
+          <Button onClick={handleOnSave} className="rounded-xl px-6 py-2" type="button">
+            {editingNote ? "Update Note" : "Add Note"}
           </Button>
         </div>
       </form>

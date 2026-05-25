@@ -60,7 +60,7 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
+//update the notes in notes.json http method
 export async function PATCH(request) {
   try {
     const body = await request.json();
@@ -73,36 +73,37 @@ export async function PATCH(request) {
     } catch (e) {
       notes = [];
     }
+
     const idToEdit = body?.id;
     if (!idToEdit) {
       throw new Error("Invalid request body: id is required");
     }
-    const filteredNotes = notes.filter((note) => note.id !== idToEdit);
-    await fs.writeFile(filePath, JSON.stringify(filteredNotes, null, 2));
 
-    const noteToUpdate = notes.filter((note) => {
-      note.id == idToEdit;
-    });
-      const { id, title, description } = body || {};
-      if (!id) {
-        throw new Error("Invalid request body: id is required");
+    let updatedNote = null;
+    const updated = notes.map((note) => {
+      if (note.id === idToEdit) {
+        updatedNote = {
+          ...note,
+          title: body.title ?? note.title,
+          description: body.description ?? note.description,
+        };
+        return updatedNote;
       }
-      let updatedNote = null;
-      const updated = notes.map((note) => {
-        if (note.id === id) {
-          updatedNote = { ...note, title: title ?? note.title, description: description ?? note.description };
-          return updatedNote;
-        }
-        return note;
-      });
-      await fs.writeFile(filePath, JSON.stringify(updated, null, 2));
-      return NextResponse.json({ success: true, note: updatedNote }, { status: 200 });
+      return note;
+    });
+
+    if (!updatedNote) {
+      throw new Error("Note not found");
+    }
+
+    await fs.writeFile(filePath, JSON.stringify(updated, null, 2));
+    return NextResponse.json({ success: true, note: updatedNote }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
-
+//Delete the notes from notes.json file http method 
 export async function DELETE(request) {
   try {
     const body = await request.json();
