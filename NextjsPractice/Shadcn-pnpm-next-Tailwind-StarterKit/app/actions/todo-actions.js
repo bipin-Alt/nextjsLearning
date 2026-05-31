@@ -15,7 +15,11 @@ export async function addTodo(data) {
       description: data.get('description'),
     }
     if(currentTodo.title.trim() === '' || currentTodo.description.trim() === '') {
-        throw new Error('Title and description cannot be empty')
+        return {
+            error : "Title and description cannot be empty",
+            success: false,
+            message: 'Failed to add todo'
+        }
     }
 
     const existingTodos = fileData ? JSON.parse(fileData) : [];
@@ -24,9 +28,16 @@ export async function addTodo(data) {
 
     await fs.writeFile(filePath, JSON.stringify(existingTodos, null, 2))
     revalidatePath('/todo-app')
-    return 'Todo added successfully'
+    return {
+        success: true,
+        message: 'Todo added successfully',
+    }
   } catch (error) {
-    return error.message
+    return {
+        success: false,
+        message: "Something went wrong while adding the todo",
+        error : error.message 
+    }
   }
 }
 export async function deleteTodo(id){
@@ -39,8 +50,15 @@ export async function deleteTodo(id){
 
         await fs.writeFile(filePath, JSON.stringify(updatedTodos, null, 2))
         revalidatePath('/todo-app');
-        return 'Todo deleted successfully';
+        return {
+            success: true,
+            message: 'Todo deleted successfully'
+        }
     }catch(error){
-        return error.message
+        return {
+            success: false,
+            message: "Something went wrong while deleting the todo",
+            error: error.message
+        }
     }
 }

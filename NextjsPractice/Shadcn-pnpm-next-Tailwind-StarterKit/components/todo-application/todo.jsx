@@ -1,9 +1,20 @@
-import { addTodo } from "@/app/actions/todo-actions";
+'use client'
+import { addTodo, deleteTodo } from "@/app/actions/todo-actions";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
-function Todo() {
+import { useActionState } from "react";
+
+
+const initialState = {};
+function Todo({todos}) {
+   const [addState, addAction] = useActionState(addTodo, initialState);
+   const [deleteState, deleteAction] = useActionState(deleteTodo, initialState);
+   console.log("Delete Action : " , deleteAction);
+   console.log("Delete State", deleteState);
+   console.log(todos);
+   
     return ( 
         <>
         <div>
@@ -23,7 +34,18 @@ function Todo() {
                 Your Todos :
                 <div>
                     {
-
+                     todos.map((todo) =>(
+                     <div key={todo.id}>
+                        <h3>{todo.title}</h3>
+                        <p>{todo.description}</p>
+                        <form action={deleteTodo.bind(null, todo.id)}>
+                           <Button>Delete Todo</Button>
+                        </form>
+                        <form>
+                            <Button>Mark as complete</Button>
+                        </form>
+                     </div>
+                    ))
                     }
                 </div>
             </div>
