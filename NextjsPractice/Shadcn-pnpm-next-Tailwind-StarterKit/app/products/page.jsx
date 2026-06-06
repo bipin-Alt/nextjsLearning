@@ -1,6 +1,6 @@
 import ProductList from "@/components/product-list";
 
- async function ProductDistribution() {
+ async function ProductDistribution() {  // If i need to fetch data with  react query then..........
     const response = await fetch('https://dummyjson.com/products', {
       cache :'force-cache'
     })
