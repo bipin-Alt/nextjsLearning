@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import CommonInput from "../commonInput/commonInput";
-import { handleLogin } from "@/app/actions/serverActions";
 
 function CommonForm({ formData = [], buttonText }) {
   function HandleFormDistribution({ currentFormData }) {
@@ -33,7 +32,7 @@ function CommonForm({ formData = [], buttonText }) {
   }
 
   return (
-    <form className="space-y-4" action={handleLogin}>
+    <form className="space-y-4">
       <div className="space-y-3">
         {formData.map((data) => (
           <div key={data.id}>

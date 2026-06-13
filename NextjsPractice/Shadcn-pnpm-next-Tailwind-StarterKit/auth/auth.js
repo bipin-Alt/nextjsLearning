@@ -12,5 +12,18 @@ export const { handlers, signIn, signOut, auth} =NextAuth({
             clientId : process.env.AUTH_GITHUB_ID,
             clientSecret : process.env.AUTH_GITHUB_SECRET
         })
-    ]
+    ],
+    callbacks :{
+        //save token from provider to jwt
+        async jwt({token, account}){
+            if(account) {
+                token.accessToken = account.access_token;
+            }
+            return token;
+        },
+        async session({session, token}){
+            session.accessToken = token.accessToken;
+            return session;
+        }
+    }
 })
