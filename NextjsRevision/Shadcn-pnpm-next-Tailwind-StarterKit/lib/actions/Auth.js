@@ -42,17 +42,20 @@ export async function HandleRegistration(formData) {
    const hashedPassword = await bcrypt.hash(password,10);
    //save the data to the database
    
-   const newUser = await prisma.user.create({
+   const newUser = await prisma.user.create({   //creating an user with the credentials
     data:{
       email : email,
       password:hashedPassword,
       name: name
     }
    });
-   
 
-
-
+   return {
+    status : 200,
+    message: "Your account has been created successfully",
+    data:{userId: newUser.id}
+   }
+  
   } catch (e) {
     console.log("REGISTRATION ERROR :", e);
   }
