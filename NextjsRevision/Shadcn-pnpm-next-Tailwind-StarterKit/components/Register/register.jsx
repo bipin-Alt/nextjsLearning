@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FaGithub, FaGoogle } from "react-icons/fa";
+import { FaGithub, FaGoogle, FaEye } from "react-icons/fa";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -64,13 +64,21 @@ export default function Register() {
             <div className="grid gap-2">
               <Label htmlFor="password">Password</Label>
 
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Enter your password"
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  <FaEye className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
             {/* Confirm Password */}
@@ -79,13 +87,21 @@ export default function Register() {
                 Confirm Password
               </Label>
 
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                placeholder="Confirm your password"
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  <FaEye className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
             {/* Register */}
