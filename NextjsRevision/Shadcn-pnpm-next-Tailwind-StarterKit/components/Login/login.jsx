@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FaGithub, FaGoogle } from "react-icons/fa";
+import { FaGithub, FaGoogle, FaEye } from "react-icons/fa";
 import { HandleLogin } from "@/lib/actions/Auth";
 
 
@@ -60,12 +60,20 @@ export default function Login() {
                 </Link>
               </div>
 
-              <Input
-                name="password"
-                id="password"
-                type="password"
-                required
-              />
+              <div className="relative">
+                <Input
+                  name="password"
+                  id="password"
+                  type="password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  <FaEye className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
             {/* Login */}
