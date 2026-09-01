@@ -5,9 +5,7 @@ import { prisma } from "../prisma";
 
 //Registration function
 export async function HandleRegistration(formData) {
-  console.log(formData);
   try {
-
     //selecting elements
     const name = formData.get("name");
     const email = formData.get("email");
@@ -24,6 +22,7 @@ export async function HandleRegistration(formData) {
 
    //for form validation of the passwords didn't match 
    if(password !== confirmPassword) {
+    console.log("Your password doesn't match")
     return {
       status:400,
       message:"confirm password should match  to your password."
@@ -32,6 +31,7 @@ export async function HandleRegistration(formData) {
 
   // checking if the user with same email exists already
    if(existingUser){
+    console.log("Your Account exists already login to access it.")
     return {
       status : 409 ,
       message : "User already exists please login to access your account",
@@ -44,7 +44,7 @@ export async function HandleRegistration(formData) {
    
    const newUser = await prisma.user.create({   //creating an user with the credentials
     data:{
-      email : email,
+      email: email,
       password:hashedPassword,
       name: name
     }
@@ -58,10 +58,58 @@ export async function HandleRegistration(formData) {
   
   } catch (e) {
     console.log("REGISTRATION ERROR :", e);
+    return {
+      status:500,
+      message:"Something went wrong!try again later"
+    }
   }
 }
 
 // Login Authentication Function
 export async function HandleLogin(formData) {
-  console.log(formData);
+
+  try{
+     const email = formData.get("email");
+  const password = formData.get("password");
+
+  if(!email || !password) {
+    return {
+      status:400,
+      message:"Please enter the email and password",
+    }
+  }
+
+  const user = await prisma.user.findUnique({
+    where:{email}
+  })
+
+  if(!user){
+    return {
+      status:401,
+      message:"Invalid email or password",
+    }
+  }
+
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if(!isPasswordValid){
+    return {
+      status : 401,
+      message:"Invalid email or password"
+    }
+  }
+  return{
+    status: 200,
+    message:"Logged in successfully",
+    data : {
+      user:{id: user.id, email: user.email, name:user.name, createdAt : user.createdAt}
+    },
+  }
+  }catch(e){
+    console.log("Something Went wrong", e);
+    return {
+      status:500,
+      message:"Something went wrong"
+    }
+  }
 }
