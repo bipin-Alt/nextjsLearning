@@ -14,11 +14,20 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FaGithub, FaGoogle, FaEye } from "react-icons/fa";
+import { FaGithub, FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
 import { HandleLogin } from "@/lib/actions/Auth";
+import { useDispatch } from "react-redux";
+import { togglePasswordShow } from "@/lib/features/uiSlice/uiSlice";
+import { useSelector } from "react-redux";
+
 
 
 export default function Login() {
+
+const dispatch = useDispatch();
+const viewPassword = useSelector((state)=> state.ui.showPassword);
+
+console.log(viewPassword);
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
       <Card className="w-full max-w-md shadow-sm">
@@ -41,7 +50,7 @@ export default function Login() {
               <Input
                 id="email"
                 type="email"
-                 name="email"
+                name="email"
                 placeholder="m@example.com"
                 required
               />
@@ -64,14 +73,18 @@ export default function Login() {
                 <Input
                   name="password"
                   id="password"
-                  type="password"
+                  type= {viewPassword? "text":"password"}
                   required
                 />
                 <button
+                onClick={()=>{dispatch(togglePasswordShow())}}
                   type="button"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  <FaEye className="h-4 w-4" />
+                 { 
+                   viewPassword ?
+                  <FaEye className="h-4 w-4" /> : <FaEyeSlash className="h-4 w-4"/>
+                }
                 </button>
               </div>
             </div>
@@ -94,28 +107,28 @@ export default function Login() {
           </div>
 
           {/* Google */}
-      <Button
-  type="button"
-  variant="outline"
-  className="w-full"
->
-  <FaGoogle className="mr-2 h-4 w-4" />
-  Continue with Google
-</Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+          >
+            <FaGoogle className="mr-2 h-4 w-4" />
+            Continue with Google
+          </Button>
 
-<Button
-  type="button"
-  variant="outline"
-  className="mt-3 w-full"
->
-  <FaGithub className="mr-2 h-4 w-4" />
-  Continue with GitHub
-</Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="mt-3 w-full"
+          >
+            <FaGithub className="mr-2 h-4 w-4" />
+            Continue with GitHub
+          </Button>
         </CardContent>
 
         <CardFooter className="justify-center">
           <p className="text-sm text-muted-foreground">
-         Does not have an account?
+            Does not have an account?
             <Link
               href="/Register"
               className="font-medium text-foreground underline-offset-4 hover:underline"
