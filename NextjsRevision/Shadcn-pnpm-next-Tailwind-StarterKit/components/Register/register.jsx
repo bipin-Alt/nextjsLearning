@@ -1,5 +1,6 @@
+"use client"
 import Link from "next/link";
-import { FaGithub, FaGoogle, FaEye } from "react-icons/fa";
+import { FaGithub, FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,8 +14,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { HandleRegistration } from "@/lib/actions/Auth";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { togglePasswordShow } from "@/lib/features/uiSlice/uiSlice";
+
+
 
 export default function Register() {
+  const dispatch = useDispatch();
+  const showPassword = useSelector(state=> state.ui.showPassword);
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
       <Card className="w-full max-w-md shadow-sm">
@@ -68,15 +76,19 @@ export default function Register() {
                 <Input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword?"text":"password"}
                   placeholder="Enter your password"
                   required
                 />
                 <button
+                  onClick={()=>{dispatch(togglePasswordShow())}}
                   type="button"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  <FaEye className="h-4 w-4" />
+                  {
+                    showPassword ? <FaEyeSlash  className="h-4 w-4"/> : <FaEye className="h-4 w-4" />
+                  }
+                  
                 </button>
               </div>
             </div>
@@ -91,15 +103,19 @@ export default function Register() {
                 <Input
                   id="confirmPassword"
                   name="confirmPassword"
-                  type="password"
+                  type={showPassword?"text":"password"}
                   placeholder="Confirm your password"
                   required
                 />
-                <button
+                 <button
+                  onClick={()=>{dispatch(togglePasswordShow())}}
                   type="button"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  <FaEye className="h-4 w-4" />
+                  {
+                    showPassword ? <FaEyeSlash  className="h-4 w-4"/> : <FaEye className="h-4 w-4" />
+                  }
+                  
                 </button>
               </div>
             </div>
