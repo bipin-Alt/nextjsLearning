@@ -22,7 +22,6 @@ export async function HandleRegistration(formData) {
 
    //for form validation of the passwords didn't match 
    if(password !== confirmPassword) {
-    console.log("Your password doesn't match")
     return {
       status:400,
       message:"confirm password should match  to your password."
@@ -92,11 +91,13 @@ export async function HandleLogin(formData) {
 
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
+  console.log(isPasswordValid);
   if(!isPasswordValid){
     return {
       status : 401,
       message:"Invalid email or password"
     }
+   
   }
   return{
     status: 200,
