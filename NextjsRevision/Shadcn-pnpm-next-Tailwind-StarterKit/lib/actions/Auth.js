@@ -1,6 +1,9 @@
 "use server";
 import bcrypt from "bcryptjs";
 import { prisma } from "../prisma";
+import { createSession, destroySession } from "../session";
+import { redirect } from "next/navigation";
+
 
 
 //Registration function
@@ -13,7 +16,7 @@ export async function HandleRegistration(formData) {
     const confirmPassword = formData.get("confirmPassword")
 
     if (!email || !password) {  //checking if the email and password is empty
-      return { status:400, message:"Please enter your passwords and "};
+      return { status:400, message:"Please enter your credentials!! "};
     }
 
    const existingUser = await prisma.user.findUnique({   //checking if the user already exists 
@@ -48,7 +51,7 @@ export async function HandleRegistration(formData) {
       name: name
     }
    });
-
+    console.log("New User Created Successfully", newUser);
    return {
     status : 200,
     message: "Your account has been created successfully",
@@ -66,51 +69,53 @@ export async function HandleRegistration(formData) {
 
 // Login Authentication Function
 export async function HandleLogin(formData) {
-
-  try{
-     const email = formData.get("email");
+  const email = formData.get("email");
   const password = formData.get("password");
 
+  //check if the email and password//
   if(!email || !password) {
     return {
       status:400,
       message:"Please enter the email and password",
     }
   }
-
+  // find the user with the email that is unique
   const user = await prisma.user.findUnique({
     where:{email}
   })
-
+  //if there isn't any user//
   if(!user){
+   console.log("Can't find the user");
     return {
       status:401,
       message:"Invalid email or password",
     }
   }
-
-
+ //compare the password entered and the hased password 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   console.log(isPasswordValid);
+  //check if the password is invalid
   if(!isPasswordValid){
     return {
       status : 401,
       message:"Invalid email or password"
-    }
-   
+    } 
   }
-  return{
-    status: 200,
-    message:"Logged in successfully",
-    data : {
-      user:{id: user.id, email: user.email, name:user.name, createdAt : user.createdAt}
-    },
+  //if the password is valid then we then create a session for it //
+  await createSession(user.id);
+
+
+  if(user.role === "ADMIN") {
+    redirect("/Admin");
+  }else{
+    redirect("/Dashboard");
   }
-  }catch(e){
-    console.log("Something Went wrong", e);
-    return {
-      status:500,
-      message:"Something went wrong"
-    }
-  }
+  
+}
+
+
+// This function handles logout when the user logs out of the current session
+export async function handleLogout(){
+  await destroySession();
+  redirect("/Login")
 }
