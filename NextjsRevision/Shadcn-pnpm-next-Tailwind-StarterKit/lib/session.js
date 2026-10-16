@@ -11,8 +11,22 @@ function hashSessionToken ( token ){
     return crypto.createHash("sha256").update(token).digest("hex");
 }
 
+//Function that cleans up the database  or that will delete the expired session information whenever a new session is requested by that account.
+async function cleanExpiredSessions(){
+    await prisma.session.deleteMany({
+   where :{
+    expiresAt :{
+        lt : new Date(),
+    },
+   }
+    });
+};
+
+ 
 // Function to create a new session
 export async function createSession(userId){
+  //wait for expired sessions to be deleted//
+     await cleanExpiredSessions();
     //Generate a random secure session token
     const sessionToken = crypto.randomBytes(32).toString("hex");
     // Set the session expiration time (2 days from now)
