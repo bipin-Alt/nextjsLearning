@@ -15,8 +15,9 @@ export default function UserDashboard({userName, userEmail}) {
             <p>You are registered under the email : {userEmail}</p>
             <p> This is the user Dashboard</p>
             <p>Wanna logout ?</p>
-            <Button onClick={()=>{handleLogout}}>Logout</Button>
+            <form action={handleLogout}>
+            <Button type="submit">Logout</Button>
+            </form>
         </div>
-
     );
-}
+} 

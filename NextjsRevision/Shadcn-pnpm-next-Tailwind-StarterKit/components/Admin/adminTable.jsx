@@ -12,8 +12,10 @@ export default function AdminTable({adminName, adminEmail}) {
         <div> 
             <p>Hello {adminName}</p>
             <p> This is the admin table.</p>
-             <p>Wanna logout ?</p>
-             <Button onClick={()=>{handleLogout()}}>Logout</Button>
+            <p>Wanna logout ?</p>
+            <form action={handleLogout}>
+            <Button type="submit">Logout</Button>
+            </form>
         </div>
     );
 }
