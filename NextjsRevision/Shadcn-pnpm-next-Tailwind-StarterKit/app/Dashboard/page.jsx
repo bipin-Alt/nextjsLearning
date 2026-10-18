@@ -1,19 +1,16 @@
 import UserDashboard from '@/components/Dashboard/dashboard';
+import { verifySession } from '@/lib/DataAccessLayer';
 import { getCurrentSession } from '@/lib/session';
-import { redirect } from 'next/navigation';
 
 import React from 'react';
 
 export default async function UserDashboardpage() {
-const session = await getCurrentSession();
-
- if(!session) {
-    redirect('/Login');
- }
-    return (
+const sessionData = await verifySession();
+console.log(sessionData);
+return (
        <UserDashboard 
-        userName={session.user.name}
-        userEmail={session.user.email}
+        userName={sessionData.name}
+        userEmail={sessionData.email}
        />
     );
 }
