@@ -4,9 +4,7 @@ import { prisma } from "./prisma";
 
 
 const SESSION_COOKIE_NAME = "session_id";
-
 //This function is responsible for hashing the session token because even if the database is leaked then the hashed session will found//
-
 function hashSessionToken ( token ){
     return crypto.createHash("sha256").update(token).digest("hex");
 }
@@ -30,7 +28,7 @@ export async function createSession(userId){
     //Generate a random secure session token
     const sessionToken = crypto.randomBytes(32).toString("hex");
     // Set the session expiration time (2 days from now)
-    const expiresAt = new Date(Date.now() + 30*1000); 
+    const expiresAt = new Date(Date.now() + 3*24*60*60*1000); 
     
     const newSession= await prisma.session.create({
        data :{
